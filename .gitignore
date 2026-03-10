@@ -1,0 +1,29 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.python-version
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editors and tooling
+.idea/
+.vscode/
+
+# Data and outputs
+data/
+*.csv
+*.parquet
+*.feather
+*.xlsx
+*.pkl
+*.joblib
+
+# Logs
+*.log
