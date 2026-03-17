@@ -4,12 +4,13 @@ Data Validation
 Author: paperxdDataset 
 URL: All Computer Prices 20252. 
 License: Attribution 4.0 International https://creativecommons.org/licenses/by/4.0/
+Last Verified: March 16, 2026.
 
 2. Verified Dataset Dimensions
 Row Count: 100,000 records.
 Actual Column Count: 33 attributes.
 
-3. Real Schema (Attribute Descriptions) the most critical features for our models include:
+3. Schema (Attribute Descriptions) the most critical features for our models include:
 Attribute   	   Data Type   	 			 Description
 device_type 	 String/Categorical   	Classification as Laptop or Desktop.
 brand            String/Categorical     The manufacturer (e.g., Lenovo, HP, ASUS).
