@@ -1,0 +1,30 @@
+Data Validation
+
+1. Dataset Author & Link
+Author: paperxdDataset 
+URL: All Computer Prices 20252. 
+License: Attribution 4.0 International https://creativecommons.org/licenses/by/4.0/
+
+2. Verified Dataset Dimensions
+Row Count: 100,000 records.
+Actual Column Count: 33 attributes.
+
+3. Real Schema (Attribute Descriptions) the most critical features for our models include:
+Attribute   	   Data Type   	 			 Description
+device_type 	 String/Categorical   	Classification as Laptop or Desktop.
+brand            String/Categorical     The manufacturer (e.g., Lenovo, HP, ASUS).
+model            String/Categorical     The specific product model name.
+release_year     Integer                The year of market release (2018–2025).
+os               String/Categorical     Operating system (Windows, macOS, Linux, etc.).
+form_factor      String/Categorical     Physical build (e.g., ATX, Ultrabook, 2-in-1).
+cpu_brand        String/Categorical     CPU manufacturer (Intel, AMD, Apple).
+cpu_model        String/Categorical     Specific CPU model string.
+cpu_tier         Integer                Numerical tiering of the CPU performance.
+cpu_cores        Integer                The number of physical processing cores.
+price            Float (Target)         The listed market price in USD.5. 
+
+4. Dataset Statistics & Distribution
+Device Mix: Approximately 60% Laptops and 40% Desktops.
+Brand Dominance: Lenovo (16%) and HP (14%) are the most frequent, with a large "Other" category (70%) representing the market's high fragmentation.
+OS Distribution: Windows leads with 72%, followed by macOS at 18%.
+Release Year Range: Data spans from 2018 to 2025, with the highest volume of records concentrated in the 2022–2024 window (over 50,000 records).
