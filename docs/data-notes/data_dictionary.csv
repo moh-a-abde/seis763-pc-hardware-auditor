@@ -1,0 +1,34 @@
+field_name,description,data_type,example_value,distinct_values,null_count,notes
+device_type,Device category (either desktop or laptop),str,Desktop,2,0,
+brand,Manufacturer brand,str,Samsung,10,0,sometimes has unusual connections to os (like apple brand to windows os)
+model,Device model identifier (not a model number),str,Samsung Forge XDI,99036,0,"definitely not a traditional ""model number"", but maybe a unique identifier for each record?"
+release_year,Year of device release,int64,2022,8,0,
+os,Operating system (likely pre-installed),str,Windows,4,0,sometimes has unusual connections to brand (like windows os to apple brand)
+form_factor,Case standards for desktop and laptops,str,ATX,10,0,"unsure what ""mainstream"" form factor is?"
+cpu_brand,Name of CPU vendor/manufacturer,str,Intel,3,0,
+cpu_model,"CPU model identifier (contains manufacturer name, series, and unknown numeric) ",str,Intel i5-11129,26971,0,"last numeric doesn't match existing CPU series (ex. 7700, 5800X, etc.), so it must be a value the author created"
+cpu_tier,"Performance tier of CPU (1 being lowest, 6 being highest)",int64,3,6,0,
+cpu_cores,Number of cores in CPU,int64,12,12,0,
+cpu_threads,Number of threads utilized by SPU,int64,24,25,0,
+cpu_base_ghz,Base CPU clock speeds (GHz),float64,2.8,8,0,
+cpu_boost_ghz,Boosted CPU clock speeds (GHz),float64,3.8,18,0,
+gpu_brand,"GPU vendor (ex. NVIDIA, AMD, etc.)",str,NVIDIA,4,0,
+gpu_model,Name and series of GPU,str,RTX 40 60,49,0,"likely needs cleaning (ex. data as RTX 40 60 rather than RTX4060; RX 6000 80 XT instead of RX6800XT, if that's what current data represents). Also, unclear if dedicated or integrated."
+gpu_tier,"Performance tier of GPU (1 being lowest, 6 being highest)",int64,2,6,0,
+vram_gb,Dedicated video memory (GB),int64,6,8,0,
+ram_gb,System memory (GB),int64,16,15,0,
+storage_type,"Storage technology (ex. SSD, HDD, etc.)",str,NVMe,4,0,
+storage_gb,Storage capacity (GB),int64,1024,5,0,
+storage_drive_count,Number of storage devices installed,int64,1,4,0,
+display_type,Display technology,str,LED,6,0,"can infer if it's integrated (laptop) or external (desktop) by looking at ""device_type"""
+display_size_in,Size of display (Inches),float64,27,9,0,
+resolution,Resolution of display (pixel WidthxHeight),str,2560x1440,6,0,
+refresh_hz,Display refresh rate (Hz),int64,90,6,0,
+battery_wh,Capacity of laptop battery (Wh),int64,0,8,0,confirmed only for laptops
+charger_watts,Wattage of laptop charger (W),int64,0,7,0,confirmed only for laptops
+psu_watts,Wattage of desktop power supply (W),int64,750,9,0,confirmed only for desktops
+wifi,Generation of Wi-Fi,str,Wi-Fi 6,4,0,
+bluetooth,Version of bluetooth technology,float64,5.1,5,0,
+weight_kg,Weight of device (kg),float64,11,47,0,
+warranty_months,Months of warranty issued for device,int64,36,4,0,
+price,Price of device,float64,1383.99,3366,0,presumably USD?
