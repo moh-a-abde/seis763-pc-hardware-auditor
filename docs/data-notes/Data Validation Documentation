@@ -4,25 +4,48 @@ Data Validation
 Author: paperxdDataset 
 URL: All Computer Prices 20252. 
 License: Attribution 4.0 International https://creativecommons.org/licenses/by/4.0/
-Last Verified: March 16, 2026.
 
 2. Verified Dataset Dimensions
 Row Count: 100,000 records.
 Actual Column Count: 33 attributes.
+Missing Values: < 1% (Minimal cleaning required).
 
-3. Schema (Attribute Descriptions) the most critical features for our models include:
-Attribute   	   Data Type   	 			 Description
-device_type 	 String/Categorical   	Classification as Laptop or Desktop.
-brand            String/Categorical     The manufacturer (e.g., Lenovo, HP, ASUS).
-model            String/Categorical     The specific product model name.
-release_year     Integer                The year of market release (2018–2025).
-os               String/Categorical     Operating system (Windows, macOS, Linux, etc.).
-form_factor      String/Categorical     Physical build (e.g., ATX, Ultrabook, 2-in-1).
-cpu_brand        String/Categorical     CPU manufacturer (Intel, AMD, Apple).
-cpu_model        String/Categorical     Specific CPU model string.
-cpu_tier         Integer                Numerical tiering of the CPU performance.
-cpu_cores        Integer                The number of physical processing cores.
-price            Float (Target)         The listed market price in USD.5. 
+3. Real Schema (Attribute Descriptions) the most critical features for our models include:
+Attribute   	  		 Data Type   	 			 Description
+device_type 		String/Categorical 		Classification as Laptop or Desktop.
+brand 				String/Categorical  	The manufacturer (e.g., Lenovo, HP, ASUS).
+Model 				String/Categorical 		The specific product model name.
+release_year 		Integer 				The year of market release (2018–2025).
+os 					String/Categorical 		Operating system (Windows, macOS, Linux, etc.).
+form_factor 		String/Categorical 		Physical build (e.g., ATX, Ultrabook, 2-in-1).
+cpu_brand 			String/Categorical 		CPU manufacturer (Intel, AMD, Apple).
+cpu_model 			String/Categorical 		Specific CPU model string.
+cpu_tier 			Integer 				Numerical tiering of the CPU performance.
+cpu_cores 			Integer 				The number of physical processing cores.
+cpu_threads 		Integer 				The number of physical processing threads.
+cpu_base_ghz 		Float 					Base processing speed of CPU.
+cpu_boost_ghz 		Float 					Boosted processing speed of CPU.
+gpu_brand 			String/Categorical 		GPU manufacturer (NVIDIA, AMD, Apple, Intel).
+gpu_model 			String/Categorical 		Specific GPU model string.
+gpu_tier 			Integer 				Numerical tiering of the GPU performance.
+vram_gb 			Integer 				Total Virtual RAM in GB.
+ram_gb 				Integer 				Total RAM in GB.
+storage_type 		String/Categorical 		Physical storage type (HDD, SSD, NVMe).
+storage_gb 			Integer 				Total storage capacity in GB.
+storage_drive_count Integer 				Number of storage device connections.
+display_type 		String/Categorical 		Monitor display type (LED, OLED, IPS, etc).
+display_size_in 	Float 					Screen size of monitor in inches.
+resolution			Integer 				Monitor Resolution (1920x1080, 2560x1440, etc)
+refresh_hz 			Integer 				Refresh rate of monitor in hertz.
+battery_wh 			Integer 				Batter life in watt hours.
+charger_watts		Integer 				Total output of charger in watts.
+psu_watts 			Integer 				total output of PSU in watts.
+wifi				String/Categorical 		Wi-Fi protocol (WiFi-6, WiFi-7, etc).
+bluetooth			Float 					Bluetooth protocol (5.3, 5.2, 5.1, etc).
+weight_kg 			Float 					Device weight in kg.
+warranty_months 	Integer 				Number of months device is covered by the manufacturer warranty.
+Prices				Float (Target) 			The listed market price in USD.5.
+ 
 
 4. Dataset Statistics & Distribution
 Device Mix: Approximately 60% Laptops and 40% Desktops.
