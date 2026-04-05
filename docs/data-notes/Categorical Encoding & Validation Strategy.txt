@@ -1,0 +1,98 @@
+Technical Note: Categorical Encoding & Validation Strategy
+Focus: High-Cardinality Feature Engineering and Dimension Management
+
+To ensure The Hardware Auditor project maintains high predictive accuracy while avoiding the "trap" of Data Leakage, we will implement a tiered encoding and consolidation strategy. This approach is designed to transform complex hardware strings into numerically significant values without causing "dimension explosion" (excessive predictor counts).
+
+1. Encoding Methodology & Dimension Control
+We have identified four primary tiers of categorical variables. To address instructor concerns regarding the total number of predictors, we will implement Category Aggregation prior to encoding:
+
+Category Consolidation (The "Long Tail" Rule): For all categorical fields, any attribute value appearing in less than 1% of the dataset will be aggregated into a single "Other" category. This prevents the model from overfitting on rare, one-off hardware models and keeps the total predictor count manageable.
+
+Target Encoding (High Cardinality): Applied to Model, CPU Model, and GPU Model. By using Target Encoding instead of dummy variables (One-Hot), we represent these thousands of unique entries using only one numerical column per attribute, effectively preventing a massive spike in the number of predictors.
+
+One-Hot Encoding (Low Cardinality): Applied to Device Type, OS, and Storage Type. These fields have few enough categories that "dummying" them will not negatively impact model performance or dimensionality.
+
+Ordinal Encoding: Applied to CPU Tier and GPU Tier. We will maintain the inherent performance hierarchy (e.g., i9 > i7 > i5) by mapping them to a ranked numerical scale.
+
+Frequency Encoding: Applied to Brand. This replaces names with their market frequency, allowing the model to distinguish between market leaders and niche manufacturers.
+
+2. Leakage Prevention & K-Fold Validation
+To prevent Data Leakage and Overfitting (where the model memorizes specific prices like an RTX 5090 rather than learning performance trends), we will utilize a Double-Blind K-Fold Strategy:
+
+Pre-Encoding Split: The 80/20 train-test split occurs before any encoding is calculated.
+
+K-Fold Internal Validation: Within the training set, data is split into sub-sections (folds). The mean price for a component in one fold is calculated using only the other folds.
+
+Statistical Smoothing: We will introduce "noise" during encoding to force the model to prioritize technical specs (Cores, VRAM) over specific name strings.
+
+Zero-Shot Handling: Any hardware found in the test set but missing from training will be assigned the Global Median Price to ensure system stability.
+
+3. Advanced Classification: From Binary to Multiclass
+In response to instructor feedback regarding the depth of insights, our classification goal has been expanded. We will move beyond a binary "Value vs. Tax" label to a Multiclass Value Score. This allows us to handle potential Class Imbalance by creating more granular buckets:
+
+Class 0 (Steal): High negative residuals (Significant discount).
+
+Class 1 (Fair Value): Residuals near zero (Price matches performance).
+
+Class 2 (Brand Premium): Moderate positive residuals (Paying for the name).
+
+Class 3 (Extreme Tax): High positive residuals (Statistically overpriced).
+
+Implementation Benchmarks for 2026
+These components will serve as our primary anchors for testing the robustness of our encoding and multiclass labeling:
+Component					Category	Expected Encoding Role				Expected Class
+NVIDIA GeForce RTX 5090		GPU 		High-Value Encoding Anchor			Class 3 (Extreme Tax)
+AMD Ryzen 9 9950X			CPU			Performance Baseline Anchor			Class 1 (Fair Value)
+Intel Core i9-14900K		CPU			Legacy Flagship Anchor				Class 0/1 (Steal/Fair)
+
+
+
+#Python Code Preview:
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from category_encoders import TargetEncoder, OrdinalEncoder
+
+# 1.Load Dataset
+df = pd.read_csv('all_computer_prices.csv')
+
+# 2. Category Consolidation
+# Group rare models/brands into 'Other' if they appear in < 1% of the data
+for col in ['brand', 'model', 'cpu_model', 'gpu_model']:
+    threshold = len(df) * 0.01
+    counts = df[col].value_counts()
+    repl = counts[counts <= threshold].index
+    df[col] = df[col].replace(repl, 'Other')
+
+# 3. Define Features and Target
+X = df.drop(columns=['price'])
+y = df['price']
+
+# 4. 80/20 Split 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+
+# 5. Tiered Encoding Strategy
+
+# A. Ordinal Encoding (For CPU/GPU Tiers)
+# We map these because an i9 (Tier 9) is mathematically "more" than an i3 (Tier 3)
+ord_cols = ['cpu_tier', 'gpu_tier']
+ord_enc = OrdinalEncoder(cols=ord_cols)
+X_train = ord_enc.fit_transform(X_train)
+X_test = ord_enc.transform(X_test)
+
+# B. One-Hot Encoding (For Low-Cardinality)
+# 'device_type' and 'os' become simple 0/1 dummy columns
+X_train = pd.get_dummies(X_train, columns=['device_type', 'os', 'storage_type'])
+X_test = pd.get_dummies(X_test, columns=['device_type', 'os', 'storage_type'])
+
+# C. Target Encoding (For High-Cardinality with Smoothing)
+high_card_cols = ['brand', 'model', 'cpu_model', 'gpu_model']
+target_enc = TargetEncoder(cols=high_card_cols, smoothing=1.0)
+
+# Fit on TRAIN, Transform both
+X_train_final = target_enc.fit_transform(X_train, y_train)
+X_test_final = target_enc.transform(X_test)
+
+# 6. Results Check
+print(f"Final Predictor Count: {X_train_final.shape[1]}") 
+# This number answers the instructor's "How many total predictors?" question.
