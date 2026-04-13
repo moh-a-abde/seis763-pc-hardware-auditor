@@ -85,3 +85,4 @@ The current GitHub issues are organized around:
 ## Notes On Dataset Validation
 
 Some claims in the proposal are intentionally treated as provisional until the dataset is fully checked. In particular, the exact column count, the meaning of fields like `Model`, the usefulness of fields such as `cpu_model`, the existence of `RAM Type`, and the final wording of the prediction target may need to be revised after validation.
+
