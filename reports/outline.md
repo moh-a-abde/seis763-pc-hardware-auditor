@@ -15,7 +15,7 @@ The project answers a single, practical consumer question:
 
 The work is organised as two linked tracks:
 
-1. **Regression track** — `notebooks/Project_refactored.ipynb`. Predict `price` from specs with linear models and audit the result against three specific questions the professor raised (predictor-count explosion, imputation strategy, numeric-as-categorical binning).
+1. **Regression track** — `notebooks/Project_refactored.ipynb`. Predict `price` from specs with linear models and audit the result against three specific questions (predictor-count explosion, imputation strategy, numeric-as-categorical binning).
 2. **Classification track** — `notebooks/Classification.ipynb`. Re-label every row as **Steal / Fair / Brand Premium / Extreme Tax** using quantile-binned regression residuals, then tune a model slate (Logistic, LinearSVC, SVC-RBF, Decision Tree, HistGBM, soft Voting) to predict those labels from specs alone. This operationalises the project's **Brand Tax** thesis: "which parts of the market price are *not* explained by hardware?"
 
 The two-stage design is deliberate. A regression from specs absorbs the "you get what you pay for" signal; what is left in the residuals is — by construction — either nonlinear structure specs imply about price or genuinely unobserved market factors. The classifier therefore measures **recoverable mispricing** on top of the linear baseline.
@@ -93,7 +93,7 @@ High VIFs (`cpu_tier` 29.6, `cpu_base_ghz` 25.7, `cpu_cores` 20.5, `cpu_boost_gh
 
 ---
 
-## 4. Predictor-count audit (Professor Q1)
+## 4. Predictor-count audit
 
 How does the number of modelling features change under different encoding policies?
 
@@ -104,11 +104,11 @@ How does the number of modelling features change under different encoding polici
 | 2. Aggressive drop (`model` + `cpu_model` + `form_factor`) | **111** | loses high-cardinality signal entirely |
 | 3. **Team tiered plan** | **65** | drops `model` as an identifier, target-encodes `cpu_model`/`gpu_model`, frequency-encodes `brand`, OHE everything else |
 
-**Takeaway for the professor.** Naive OHE turns a 100k × 32 dataset into 100k × 105k, which is (a) memory-hostile, (b) mostly one-hot columns that appear in ~1 row each — pure identifier leakage, and (c) not a linear-algebra problem any baseline can solve well. The tiered plan preserves the high-cardinality signal at a 65-column footprint, and this is the encoding used by **every** downstream model in both notebooks.
+**Takeaway** Naive OHE turns a 100k × 32 dataset into 100k × 105k, which is (a) memory-hostile, (b) mostly one-hot columns that appear in ~1 row each — pure identifier leakage, and (c) not a linear-algebra problem any baseline can solve well. The tiered plan preserves the high-cardinality signal at a 65-column footprint, and this is the encoding used by **every** downstream model in both notebooks.
 
 ---
 
-## 5. Imputation experiment (Professor Q3)
+## 5. Imputation experiment
 
 ### Setup
 
@@ -143,7 +143,7 @@ How does the number of modelling features change under different encoding polici
 
 ---
 
-## 6. Numeric-as-categorical experiment (Professor Q2)
+## 6. Numeric-as-categorical experiment
 
 ### Setup
 
@@ -162,7 +162,7 @@ For each of four candidate numeric columns (`release_year`, `weight_kg`, `cpu_co
 
 Only `cpu_cores` shows a **material** non-linear effect (+7.3 pp R² when binned), consistent with the underlying market reality: core count is not linearly priced — 8 → 12 cores is a bigger jump than 12 → 16 or 16 → 24, because "useful parallelism" saturates per workload class. The other three are adequately captured as numeric / scaled floats.
 
-**In the final pipeline** (§3) we keep all four as numerics for simplicity; the production improvement from binning `cpu_cores` alone is small (~7 pp R² in isolation translates to a much smaller gain once all other features are present). The audit itself is the deliverable — the non-linearity claim is now *documented*, not assumed.
+**In the final pipeline** (§3) we keep all four as numerics for simplicity; the production improvement from binning `cpu_cores` alone is small (~7 pp R² in isolation translates to a much smaller gain once all other features are present).
 
 ---
 
@@ -295,7 +295,6 @@ The plan's ensemble is a soft `VotingClassifier` over the calibrated base learne
 
 1. All base learners produce calibrated probabilities (via `CalibratedClassifierCV` for LinearSVC and Nyström-SVC; built-in for Logistic and HistGBM).
 2. The minority classes (Steal, Extreme Tax) are where the classifier's business value lives; averaging probabilities preserves the signal from whichever single member *does* detect them, which hard voting would discard.
-3. The professor's feedback explicitly asked for an ensemble that "puts SVM, SVM-RBF, GBM together".
 
 ### What voting bought
 
@@ -310,7 +309,6 @@ The ensemble beats every single model on **macro_f1 and accuracy** — the two "
 
 The plan listed `StackingClassifier` (with logistic meta-learner) and `XGBClassifier` as stretch options. Neither was pursued because:
 
-- Voting already satisfies the professor's "ensemble of SVM + RBF + GBM + DT" ask.
 - HistGBM is competitive with XGBoost on this scale and has simpler `class_weight='balanced'` semantics.
 - Stacking would need its own train/validation partition to avoid meta-learner leakage, consuming data that is more valuable inside the base learners.
 
@@ -373,3 +371,4 @@ See `docs/data-notes/README.md` and `docs/data-notes/data_dictionary.csv` for th
 - `notebooks/Classification.ipynb` — classification track (§7, §8, §9).
 - `notebooks/Anomaly Detection-1.ipynb` — IsolationForest / LOF on `residual_std`, cross-referenced against the Steal and Extreme Tax classes; kept as a sanity check that the two approaches agree on the most extreme rows.
 - `docs/data-notes/classification-plan.md` — design contract for the classification track; this report is the executed version of that plan.
+- `Appendix.ipynb` - this appendix runs our additional non-linear regression, which the professor noted during the presentation that it'd be interesting to see. 
